@@ -1,6 +1,8 @@
-# Tensor Formalization and Indexing
+# Basic Tensor Ops
 
-## Tensor Definition and Rank
+## Tensor Formalization and Indexing
+
+### Tensor Definition and Rank
 
 A **Tensor** $\mathbf{A}$ is a multidimensional array holding elements of a certain type, $T$.
 

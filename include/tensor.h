@@ -54,6 +54,12 @@ private:
     };
 
 public:
+    // Constructor for when everything is defined (rarely used.)
+    Tensor(const Shape s, const Data<T> d, const Strides st) : shape(s), data(d), stride(st)
+    {
+
+    };
+
     // Constructor for when shape and data is defined:
     Tensor(const Shape s, const Data<T> d) : shape(s), data(d)
     {
@@ -72,6 +78,13 @@ public:
 
     Shape get_shape(){
         return shape;
+    };
+
+    Tensor<T> t(){
+        Strides reverse_stride(stride.rbegin(), stride.rend());
+        Shape reverse_shape(shape.rbegin(), shape.rend());
+        Tensor<T> transposed_tensor(reverse_shape, data, reverse_stride);
+        return transposed_tensor;
     };
 
     // Overload indexing:
