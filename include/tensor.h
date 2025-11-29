@@ -109,7 +109,18 @@ public:
         return output;
     };
 
-    // Overload multiplication 
+    // Overload multiplication (Scalar multiplication)
+    Tensor<T> operator*(T scalar){
+        Shape self_shape = shape; 
+        Data<T> output_data(data.size());
+        for (size_t i=0; i<data.size(); i++){
+            output_data[i] = data[i] * scalar;
+        }
+        Tensor<T> output(self_shape, output_data);
+        return output;
+    }
+
+    // Overload multiplication (Hadamard product)
     Tensor<T> operator*(Tensor<T> t){
         // Verify shape is equal:
         Shape self_shape = shape; 

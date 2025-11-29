@@ -128,3 +128,80 @@ $$
 $$
 
 ---
+
+## Scalar Operations
+
+Scalar operations involve combining a **Tensor** $\mathbf{A}$ with a single **Scalar** value $\alpha$. These operations (addition, subtraction, multiplication, division) are performed **element-wise**, where the scalar is applied uniformly to every element in the tensor.
+
+### Formal Constraint
+
+Scalar operations are always defined, regardless of the tensor's shape or rank. The resulting tensor $\mathbf{C}$ has the exact same shape as the input tensor $\mathbf{A}$.
+
+### Element-wise Scalar Addition
+
+Let $\mathbf{C} = \mathbf{A} + \alpha$.
+
+The element $c_{\mathbf{I}}$ at the coordinate $\mathbf{I}=(i_0, i_1, \dots, i_{N-1})$ in $\mathbf{C}$ is the sum of the element $a_{\mathbf{I}}$ and the scalar $\alpha$.
+
+$$
+c_{(i_0, i_1, \dots, i_{N-1})} = a_{(i_0, i_1, \dots, i_{N-1})} + \alpha
+$$
+
+### Element-wise Scalar Multiplication
+
+Let $\mathbf{C} = \mathbf{A} \cdot \alpha$.
+
+The element $c_{\mathbf{I}}$ at the coordinate $\mathbf{I}$ in $\mathbf{C}$ is the product of the element $a_{\mathbf{I}}$ and the scalar $\alpha$.
+
+$$
+c_{(i_0, i_1, \dots, i_{N-1})} = a_{(i_0, i_1, \dots, i_{N-1})} \cdot \alpha
+$$
+
+### Implementation Focus: Flat Index Iteration
+
+For any scalar operation $(\star \in \{+,-,\cdot,/\})$:
+
+$$
+\mathbf{C}.data[k] = \mathbf{A}.data[k] \star \alpha, \quad \text{for } k \in \{0, 1, \dots, L-1\}
+$$
+
+---
+
+## Tensor Reduction (Summation)
+
+**Tensor Reduction** is the process of reducing the rank (number of dimensions) of a tensor by computing a summary statistic (like **sum**, mean, min, max) across one or more dimensions.
+
+### Global Summation (Total Reduction)
+
+The simplest form is computing the sum of **all elements** in the tensor $\mathbf{A}$, resulting in a single scalar value $\sigma$.
+
+$$
+\sigma = \sum_{\mathbf{I}} a_{\mathbf{I}} = \sum_{k=0}^{L-1} \mathbf{A}.data[k]
+$$
+where the first sum is over all valid coordinate vectors $\mathbf{I}$.
+
+### Summation Along a Specific Axis (Dimension)
+
+Reducing the tensor along a specified axis $j$ (where $0 \le j < N$) results in a new tensor $\mathbf{C}$ with **Rank $N-1$**.
+
+Let $\mathbf{A}$ have shape $\mathbf{D}=(d_0, \dots, d_{N-1})$. The result tensor $\mathbf{C}$ has the shape of $\mathbf{D}$ with the $j$-th dimension removed.
+
+#### Formal Definition
+
+The element $c_{\mathbf{I}'}$ in the result tensor $\mathbf{C}$ is the sum of all elements in $\mathbf{A}$ that share the same coordinates for all dimensions *except* dimension $j$.
+
+Let $\mathbf{I} = (i_0, \dots, i_j, \dots, i_{N-1})$ be a coordinate in $\mathbf{A}$. Let $\mathbf{I}' = (i_0, \dots, i_{j-1}, i_{j+1}, \dots, i_{N-1})$ be the corresponding coordinate in $\mathbf{C}$.
+
+$$
+c_{\mathbf{I}'} = \sum_{i_j=0}^{d_j-1} a_{(i_0, \dots, i_j, \dots, i_{N-1})}
+$$
+
+#### Example (Rank 3 Tensor, Shape $(2, 3, 4)$, Sum over Axis 1)
+
+If $\mathbf{A}$ has shape $(d_0, d_1, d_2) = (2, 3, 4)$, summing over axis $j=1$ (size $d_1=3$) results in a tensor $\mathbf{C}$ with shape $(2, 4)$.
+
+The element $c_{(i_0, i_2)}$ is calculated as:
+
+$$
+c_{(i_0, i_2)} = a_{(i_0, 0, i_2)} + a_{(i_0, 1, i_2)} + a_{(i_0, 2, i_2)}
+$$
