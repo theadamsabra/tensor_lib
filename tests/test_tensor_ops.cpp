@@ -23,6 +23,27 @@ TEST_CASE("Tensor Indexing"){
     CHECK(a[first] == 2);
 };
 
+TEST_CASE("Scalar Addition"){
+    // When both are int:
+    Tensor<int> a({2}, {1, 2});
+    int b = 3;
+    Tensor<int> c = a + b;
+
+    Index zeroth = {0};
+    Index first = {1};
+
+    CHECK(c[zeroth] == 4);
+    CHECK(c[first] == 5);
+
+    // When scalar is a different dtype:
+    double b_double = 3;
+    Tensor<int> c_double = a + b_double;
+
+    CHECK(c_double[zeroth] == 4);
+    CHECK(c_double[first] == 5);
+};
+
+
 TEST_CASE("Tensor Addition"){
     Tensor<int> a({2}, {1, 2});
     Tensor<int> b({2}, {2, 2});

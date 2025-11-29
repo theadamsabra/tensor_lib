@@ -79,11 +79,21 @@ public:
         size_t n = index.size();
         int global_idx = 0; 
         for (int i=0; i<n; i++){
-            // TODO: Check why stride isn't being constructed
             global_idx += index[i] * stride[i];
         };
         return data[global_idx];
     };
+
+    // Overload addition (Scalar addition)
+    Tensor<T> operator+(T scalar){
+        Shape self_shape = shape; 
+        Data<T> output_data(data.size());
+        for (size_t i=0; i<data.size(); i++){
+            output_data[i] = data[i] + scalar;
+        }
+        Tensor<T> output(self_shape, output_data);
+        return output;
+    }
 
     // Overload addition
     Tensor<T> operator+(Tensor<T> &t){
