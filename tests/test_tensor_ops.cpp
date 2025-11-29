@@ -20,3 +20,15 @@ TEST_CASE("Tensor Indexing"){
     CHECK(a[zeroth] == 1);
     CHECK(a[first] == 2);
 };
+
+TEST_CASE("Tensor Addition"){
+    Tensor<int> a({2}, {1, 2});
+    Tensor<int> b({2}, {2, 2});
+    Tensor<int> c = a + b;
+
+    Index zeroth = {0};
+    Index first = {1};
+
+    CHECK(c[zeroth] == 3);
+    CHECK(c[first] == 4);
+};
