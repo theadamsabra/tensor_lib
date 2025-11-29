@@ -87,3 +87,13 @@ TEST_CASE("Hadamard Product"){
     CHECK(c[zeroth] == 2);
     CHECK(c[first] == 12);
 };
+
+TEST_CASE("Transpose"){
+    Tensor<int> a({2,2}, {1,2,3,4});
+    Tensor<int> b = a.t();
+
+    Index i = {0, 1};
+    Index j = {1, 0};
+
+    CHECK(a[i] == b[j]);
+}
