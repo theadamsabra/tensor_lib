@@ -32,24 +32,25 @@ private:
     Data<T> data;
     Strides stride;
 
-    void calculate_strides(){
+    Strides calculate_strides(){
         /*
         Construct stride tensor for indexing. 
         */
-        if (shape.empty()) return;
+        if (shape.empty()) return {0};
 
         size_t num_dims = shape.size();
-        Strides stride(num_dims);
-
-        for (int i=0; i<num_dims; i++){
-            if (i != num_dims - 1){
-                stride[i] = accumulate(&shape[i + 1], &shape[num_dims], 1, multiplies<size_t>());
-            } else {
-                stride[i] = 1;
-            };
-
-        reverse(stride.begin(), stride.end());
-        };
+        Strides stride;
+        stride.resize(num_dims);
+        
+        if (num_dims > 0){
+            stride[num_dims - 1] = 1;
+            
+            // Index backwards for stride calculation
+            for (size_t i = num_dims - 1; i>0; --i){
+                stride[i - 1] = stride[i] * shape[i];
+            }
+        }
+        return stride;
     };
 
 public:
@@ -58,13 +59,13 @@ public:
     {
         size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
         // TODO: Check shape and data are same size.
-        calculate_strides();
+        stride = calculate_strides();
     };
 
     // Constructor is an emtpy tensor of specified shape:
     Tensor(const Shape shape) : shape(shape)
     {
-        calculate_strides();
+        stride = calculate_strides();
         size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
         data.resize(total_size, 0);
     };
