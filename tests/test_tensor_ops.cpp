@@ -2,7 +2,9 @@
 #include "tensor.h"
 #include "doctest.h"
 #include <iostream>
+
 using namespace std;
+using namespace tensor;
 
 TEST_CASE("Tensor Construction (Shape Only)"){
     Tensor<int> a({2});
@@ -42,7 +44,6 @@ TEST_CASE("Scalar Addition"){
     CHECK(c_double[zeroth] == 4);
     CHECK(c_double[first] == 5);
 };
-
 
 TEST_CASE("Tensor Addition"){
     Tensor<int> a({2}, {1, 2});
@@ -96,4 +97,4 @@ TEST_CASE("Transpose"){
     Index j = {1, 0};
 
     CHECK(a[i] == b[j]);
-}
+};
