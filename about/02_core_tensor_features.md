@@ -118,6 +118,7 @@ The core implementation of the transpose method should follow these three steps:
 4.  Point $\mathbf{C}$.data to $\mathbf{A}$.data.
 
 This approach ensures the transpose operation is an $O(N)$ operation based on the Rank $N$ of the tensor, not the total size $L$ of the data. 
+
 ---
 
 ## Tensor Printing (`<<` Operator)
@@ -147,3 +148,63 @@ $$
 The fastest index resets when $k$ is a multiple of the last stride $s_{N-1}$ (which is 1), but the *second-to-last* index $i_{N-2}$ resets when $k$ is a multiple of the stride $s_{N-2}$.
 
 The logic requires calculating the coordinates $\mathbf{I}=(i_0, \dots, i_{N-1})$ for the current flat index $k$ and printing an opening/closing bracket whenever a coordinate $i_j$ changes from its maximum value $d_j-1$ back to $0$.
+
+### 1. Goal: Overload the Stream Insertion Operator
+
+You will define a non-member function that overloads the stream insertion operator (`<<`). This function allows users to print your tensor like any standard C++ object:
+
+$$\text{std::cout} \ll \mathbf{A} \ll \text{std::endl};$$
+
+### Formal Signature
+The function must take a reference to the output stream and a reference to your tensor:
+
+$$\mathcal{O} = \text{operator}\ll (\mathcal{O}, \mathbf{A})$$
+
+### 2. Core Printing Strategy: The Recursive Helper
+
+To handle arbitrary ranks, the main `operator<<` function should call a **private, recursive helper function** (let's call it `print_recursive`) that manages the nested structure based on the tensor's rank.
+
+#### Helper Function Parameters
+
+The `print_recursive` function needs three things to track its progress:
+
+1.  **`os` (Output Stream):** Where to print the output.
+2.  **`current_dim` (Current Rank Level):** An integer that tracks which dimension you are currently iterating over (e.g., 0 for the outermost dimension, $N-1$ for the innermost).
+3.  **`flat_index` (Starting Data Index):** A reference to an integer that tracks the current position in the tensor's flat data array. This must be a **reference** because all recursive calls must modify and share the same global index pointer.
+
+### 3. Recursive Logic
+
+The logic is based on traversing the dimensions from the **outermost** ($current\_dim = 0$) to the **innermost** ($current\_dim = N-1$).
+
+#### A. Base Case: Innermost Dimension (Vector)
+
+The recursion stops when you reach the last dimension: $current\_dim = N-1$.
+
+1.  Print an opening bracket: `[`
+2.  **Loop** $d_{N-1}$ times (where $d_{N-1}$ is the size of the last dimension):
+    * Print the element: $\mathbf{A}.\text{data}[\text{flat\_index}]$
+    * Increment the flat index: $\text{flat\_index} \leftarrow \text{flat\_index} + 1$
+    * If it is **not** the last element of the row, print a comma and space: `, `
+3.  Print a closing bracket: `]`
+4.  **Return** from recursion.
+
+#### B. Recursive Step: Outer Dimensions ($current\_dim < N-1$)
+
+For any dimension that is not the innermost:
+
+1.  Print an opening bracket: `[`
+2.  **Loop** $d_{current\_dim}$ times (where $d_{current\_dim}$ is the size of the current dimension):
+    * **Recursive Call:** Call `print_recursive(os, current_dim + 1, flat_index)`. This processes the next, nested dimension.
+    * If it is **not** the last slice/row/sub-tensor in this dimension, print a comma and a newline (or space): `, \n`
+3.  Print a closing bracket: `]`
+4.  **Return** from recursion.
+
+### 4. Initialization and Call Flow
+
+The main `operator<<` function sets up the call:
+
+1.  Initialize a tracking index: $\text{flat\_index} = 0$.
+2.  Determine the total rank: $N = |\mathbf{A}.\text{shape}|$.
+3.  Call the helper: `print_recursive(os, 0, flat_index)`.
+
+This recursive structure ensures the output will be properly nested, correctly using the shape vector to determine how many elements belong in each nested "row" or "slice" before a closing bracket is placed.
