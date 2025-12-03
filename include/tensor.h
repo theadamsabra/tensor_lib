@@ -63,6 +63,9 @@ namespace tensor
         };
 
     public:
+        /*
+        Constructors go here:
+        */
         // Constructor for when everything is defined (rarely used.)
         Tensor(const Shape s, const Data<T> d, const Strides st) : shape(s), data(d), stride(st) {
 
@@ -84,7 +87,10 @@ namespace tensor
             data.resize(total_size, 0);
         };
 
-        Shape get_shape()
+        /*
+        Utility functions go here:
+        */
+        Shape get_shape() const
         {
             return shape;
         };
@@ -97,8 +103,14 @@ namespace tensor
             return transposed_tensor;
         };
 
+        /*
+        Overloading operators go here:
+        */
+       friend ostream& operator<<(ostream& os, const Tensor<T>& t);
+
         // Overload indexing:
-        T operator[](Index &index)
+        // TODO: Add int-based indexing
+        T operator[](Index &index) const
         {
             size_t n = index.size();
             int global_idx = 0;
@@ -110,7 +122,7 @@ namespace tensor
         };
 
         // Overload addition (Scalar addition)
-        Tensor<T> operator+(T scalar)
+        Tensor<T> operator+(const T &scalar)
         {
             Shape self_shape = shape;
             Data<T> output_data(data.size());
@@ -123,7 +135,7 @@ namespace tensor
         }
 
         // Overload addition
-        Tensor<T> operator+(Tensor<T> &t)
+        Tensor<T> operator+(const Tensor<T> &t)
         {
             // Verify shape is equal:
             Shape self_shape = shape;
@@ -149,7 +161,7 @@ namespace tensor
         };
 
         // Overload multiplication (Scalar multiplication)
-        Tensor<T> operator*(T scalar)
+        Tensor<T> operator*(const T &scalar)
         {
             Shape self_shape = shape;
             Data<T> output_data(data.size());
@@ -162,7 +174,7 @@ namespace tensor
         }
 
         // Overload multiplication (Hadamard product)
-        Tensor<T> operator*(Tensor<T> t)
+        Tensor<T> operator*(const Tensor<T> &t)
         {
             // Verify shape is equal:
             Shape self_shape = shape;
@@ -187,6 +199,15 @@ namespace tensor
             return output;
         };
     };
+
+template <typename T>
+ostream& operator<<(ostream& os, const Tensor<T>& t){
+    os << '[';
+    os << '3';
+    os << ']';
+    return os;
+};
+
 }
 
 #endif // TENSOR_H 
