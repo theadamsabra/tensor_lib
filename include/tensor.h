@@ -74,7 +74,7 @@ namespace tensor
         // Constructor for when shape and data is defined:
         Tensor(const Shape s, const Data<T> d) : shape(s), data(d)
         {
-            size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
+            // size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
             // TODO: Check shape and data are same size.
             stride = calculate_strides();
         };
@@ -106,7 +106,15 @@ namespace tensor
         /*
         Overloading operators go here:
         */
-        friend ostream &operator<<(ostream &os, const Tensor<T> &t);
+        friend inline ostream &operator<<(ostream &os, const Tensor<T> &t)
+        {
+            Index i = {0};
+
+            os << '[';
+            os << t[i];
+            os << ']';
+            return os;
+        };
 
         // Overload indexing:
         // TODO: Add int-based indexing
@@ -114,7 +122,7 @@ namespace tensor
         {
             size_t n = index.size();
             int global_idx = 0;
-            for (int i = 0; i < n; i++)
+            for (size_t i = 0; i < n; i++)
             {
                 global_idx += index[i] * stride[i];
             };
@@ -200,14 +208,14 @@ namespace tensor
         };
     };
 
-    template <typename T>
-    ostream &operator<<(ostream &os, const Tensor<T> &t)
-    {
-        os << '[';
-        os << '3';
-        os << ']';
-        return os;
-    };
+    // template <typename T>
+    // ostream &operator<<(ostream &os, const Tensor<T> &t)
+    // {
+    //     os << '[';
+    //     os << t[0];
+    //     os << ']';
+    //     return os;
+    // };
 
 } // End of tensor namespace
 
