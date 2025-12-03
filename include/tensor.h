@@ -208,6 +208,6 @@ ostream& operator<<(ostream& os, const Tensor<T>& t){
     return os;
 };
 
-}
+} // End of tensor namespace
 
 #endif // TENSOR_H 
