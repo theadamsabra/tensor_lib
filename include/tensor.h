@@ -1,4 +1,4 @@
-#ifndef TENSOR_H 
+#ifndef TENSOR_H
 #define TENSOR_H
 
 #include <vector>
@@ -106,7 +106,7 @@ namespace tensor
         /*
         Overloading operators go here:
         */
-       friend ostream& operator<<(ostream& os, const Tensor<T>& t);
+        friend ostream &operator<<(ostream &os, const Tensor<T> &t);
 
         // Overload indexing:
         // TODO: Add int-based indexing
@@ -200,14 +200,15 @@ namespace tensor
         };
     };
 
-template <typename T>
-ostream& operator<<(ostream& os, const Tensor<T>& t){
-    os << '[';
-    os << '3';
-    os << ']';
-    return os;
-};
+    template <typename T>
+    ostream &operator<<(ostream &os, const Tensor<T> &t)
+    {
+        os << '[';
+        os << '3';
+        os << ']';
+        return os;
+    };
 
 } // End of tensor namespace
 
-#endif // TENSOR_H 
+#endif // TENSOR_H
