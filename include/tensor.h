@@ -74,8 +74,16 @@ namespace tensor
         // Constructor for when shape and data is defined:
         Tensor(const Shape s, const Data<T> d) : shape(s), data(d)
         {
-            // size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
-            // TODO: Check shape and data are same size.
+            size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
+
+            if (!(data.size() == total_size)){
+                cout << "Total size of data does not match shape. \n"
+                << "Data size: " << data.size() << "\n"
+                << "Total size (inferred from shape): " << total_size << endl; 
+                // End here since it's not verified.
+                assert(data.size() == total_size);
+            };
+
             stride = calculate_strides();
         };
 
@@ -207,16 +215,6 @@ namespace tensor
             return output;
         };
     };
-
-    // template <typename T>
-    // ostream &operator<<(ostream &os, const Tensor<T> &t)
-    // {
-    //     os << '[';
-    //     os << t[0];
-    //     os << ']';
-    //     return os;
-    // };
-
 } // End of tensor namespace
 
 #endif // TENSOR_H
