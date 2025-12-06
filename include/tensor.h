@@ -66,6 +66,7 @@ namespace tensor
         /*
         Constructors go here:
         */
+
         // Constructor for when everything is defined (rarely used.)
         Tensor(const Shape s, const Data<T> d, const Strides st) : shape(s), data(d), stride(st) {
 
@@ -76,6 +77,7 @@ namespace tensor
         {
             size_t total_size = accumulate(shape.begin(), shape.end(), 1, multiplies<size_t>());
 
+            // Verify data size and intialized shape are equal. 
             if (!(data.size() == total_size)){
                 cout << "Total size of data does not match shape. \n"
                 << "Data size: " << data.size() << "\n"
@@ -87,7 +89,7 @@ namespace tensor
             stride = calculate_strides();
         };
 
-        // Constructor is an emtpy tensor of specified shape:
+        // Constructor is an empty tensor of specified shape:
         Tensor(const Shape shape) : shape(shape)
         {
             stride = calculate_strides();
@@ -114,15 +116,6 @@ namespace tensor
         /*
         Overloading operators go here:
         */
-        friend inline ostream &operator<<(ostream &os, const Tensor<T> &t)
-        {
-            Index i = {0};
-
-            os << '[';
-            os << t[i];
-            os << ']';
-            return os;
-        };
 
         // Overload indexing:
         // TODO: Add int-based indexing
